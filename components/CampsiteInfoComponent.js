@@ -8,6 +8,7 @@ import { baseUrl } from '../shared/baseUrl';
 import { InteractionManager } from 'react-native';
 import { postFavorite } from '../redux/ActionCreators';
 import { postComment } from '../redux/ActionCreators';
+import * as Animatable from 'react-native-animatable';
 
 
 const mapStateToProps = state => {
@@ -46,13 +47,20 @@ function RenderComments({comments}) {
 
 
     return (
-        <Card title='Comments'>
-            <FlatList
-                data={comments}
-                renderItem={renderCommentItem}
-                keyExtractor={item => item.id.toString()}
-            />
-        </Card>
+        <Animatable.View
+                animation='fadeInDown'
+                duration={2000}
+                delay={1000}
+        >
+            <Card title='Comments'>
+                <FlatList
+                    data={comments}
+                    renderItem={renderCommentItem}
+                    keyExtractor={item => item.id.toString()}
+                />
+            </Card>
+        </Animatable.View>
+        
     )
 }
 
@@ -62,33 +70,39 @@ function RenderCampsite(props) {
 
     if(campsite) {
         return(
-            <Card
-                featuredTitle={campsite.name}
-                image={{uri: baseUrl + campsite.image}}
+            <Animatable.View
+                animation='fadeInDown'
+                duration={2000}
+                delay={1000}
             >
-                <Text style={{margin: 10}}>
-                    {campsite.description}
-                </Text>
-                <View style={styles.cardRow}>
-                    <Icon
-                        name={props.favorite ? 'heart' : 'heart-o'}
-                        type='font-awesome'
-                        color='#f50'
-                        onPress={() => props.favorite ? console.log('Already set as a favorite') : props.markFavorite()}
-                        raised
-                        reversed
-                    />
-                    <Icon
-                        name='pencil'
-                        type='font-awesome'
-                        color='#5637DD'
-                        onPress={() => props.onShowModal()}
-                        raised
-                        reversed
-                    />
-                </View>
-                
-            </Card>
+                <Card
+                    featuredTitle={campsite.name}
+                    image={{uri: baseUrl + campsite.image}}
+                >
+                    <Text style={{margin: 10}}>
+                        {campsite.description}
+                    </Text>
+                    <View style={styles.cardRow}>
+                        <Icon
+                            name={props.favorite ? 'heart' : 'heart-o'}
+                            type='font-awesome'
+                            color='#f50'
+                            onPress={() => props.favorite ? console.log('Already set as a favorite') : props.markFavorite()}
+                            raised
+                            reversed
+                        />
+                        <Icon
+                            name='pencil'
+                            type='font-awesome'
+                            color='#5637DD'
+                            onPress={() => props.onShowModal()}
+                            raised
+                            reversed
+                        />
+                    </View>
+                    
+                </Card>
+            </Animatable.View>
         );
     }
     return <View />;
