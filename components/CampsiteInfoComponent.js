@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Text, View, ScrollView, FlatList,
     Modal, Button, StyleSheet,
-    Alert, PanResponder } from 'react-native';
+    Alert, PanResponder, Share } from 'react-native';
 import { Card, Icon, Input, Rating } from 'react-native-elements';
 
 
@@ -112,6 +112,16 @@ function RenderCampsite(props) {
     });
     
 
+    const shareCampsite = (title, message, url) => {
+        Share.share({
+            title,
+            message: `${title}: ${message} ${url}`,
+            url
+        }, {
+            dialogTitle: 'Share ' + title
+        });
+    };
+
     if(campsite) {
         return(
 
@@ -136,7 +146,7 @@ function RenderCampsite(props) {
                             color='#f50'
                             onPress={() => props.favorite ? console.log('Already set as a favorite') : props.markFavorite()}
                             raised
-                            reversed
+                            reverse
                         />
                         <Icon
                             name='pencil'
@@ -144,7 +154,15 @@ function RenderCampsite(props) {
                             color='#5637DD'
                             onPress={() => props.onShowModal()}
                             raised
-                            reversed
+                            reverse
+                        />
+                        <Icon
+                            name={'share'}
+                            type='font-awesome'
+                            color='#5637DD'
+                            raised
+                            reverse
+                            onPress={() => shareCampsite(campsite.name, campsite.description, baseUrl + campsite.image)}
                         />
                     </View>
                     

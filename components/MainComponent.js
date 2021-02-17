@@ -290,7 +290,7 @@ const MainNavigator = createDrawerNavigator(
             }
         },
         Contact: { 
-            screen: ContactNavigator,
+            screen: AboutNavigator,
             navigationOptions: {
                 drawerLabel: 'About Us',
                 drawerIcon: ({tintColor}) => (
@@ -305,7 +305,7 @@ const MainNavigator = createDrawerNavigator(
         }
             ,
         About: { 
-            screen: AboutNavigator,
+            screen: ContactNavigator,
             navigationOptions: {
                 drawerLabel: 'Contact Us',
                 drawerIcon: ({tintColor}) => (
