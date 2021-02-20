@@ -7,6 +7,9 @@ import * as Permissions from 'expo-permissions';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
 import { baseUrl } from '../shared/baseUrl';
 import { PanResponder } from 'react-native';
+import * as ImageManipulator from 'expo-image-manipulator';
+import * as MediaLibrary from 'expo-media-library';
+
 
 
 class LoginTab extends Component {
@@ -33,7 +36,7 @@ class LoginTab extends Component {
     }
 
     handleLogin() {
-        console.log(JSON.stringify(this.state));
+        //console.log(JSON.stringify(this.state));
         if(this.state.remember) {
             SecureStore.setItemAsync('userinfo', JSON.stringify({username: this.state.username, password: this.state.password}))
             .catch(error => console.log('Could not save user info', error));
@@ -150,9 +153,12 @@ class RegisterTab extends Component {
         )
     }
 
+    
+
     getImageFromCamera = async () => {
         const cameraPermission = await Permissions.askAsync(Permissions.CAMERA);
         const cameraRollPermission = await Permissions.askAsync(Permissions.CAMERA_ROLL);
+        
 
         if(cameraPermission.status === 'granted' && cameraRollPermission.status === 'granted') {
             const capturedImage = await ImagePicker.launchCameraAsync({
@@ -160,15 +166,49 @@ class RegisterTab extends Component {
                 aspect: [1, 1]
             });
             if(!capturedImage.cancelled) {
+                
+
+                this.processImage(capturedImage.uri);
                 console.log(capturedImage);
-                this.setState({imageUrl: capturedImage.uri})
+                
+                MediaLibrary.saveToLibraryAsync(capturedImage.uri);
+                
+
+            }
+        }
+    }
+
+    processImage = async (imgUri) => {
+        var processedImage = await ImageManipulator.manipulateAsync(
+            imgUri,
+            [{resize: { height: 400}}],
+            { format: ImageManipulator.SaveFormat.PNG}
+        );
+        //console.log(processedImage);
+        
+        this.setState({imageUrl: processedImage.uri});
+        
+    }
+
+    getImageFromGallery = async () => {
+        const cameraRollPermission = await Permissions.askAsync(Permissions.CAMERA_ROLL);
+
+        if(cameraRollPermission.status === 'granted') {
+            const capturedImage = await ImagePicker.launchImageLibraryAsync({
+                allowsEditing: true,
+                aspect: [1, 1]
+            });
+            
+            if(!capturedImage.cancelled) {
+                //console.log(capturedImage);
+                this.processImage(capturedImage.uri)
 
             }
         }
     }
 
     handleRegister() {
-        console.log(JSON.stringify(this.state));
+        //console.log(JSON.stringify(this.state));
         if(this.state.remember) {
             SecureStore.setItemAsync('userinfo', JSON.stringify({username: this.state.username, password: this.state.password}))
             .catch(error => console.log('Could not save user info', error));
@@ -178,6 +218,8 @@ class RegisterTab extends Component {
                 .catch(error => console.log ('Could not delete user info', error));
         }
     }
+
+
 
     render() {
         return(
@@ -193,7 +235,10 @@ class RegisterTab extends Component {
                             title='Camera'
                             onPress={this.getImageFromCamera}
                         />
-
+                        <Button
+                            title='Gallery'
+                            onPress={this.getImageFromGallery}
+                        />
                     </View>
                     <Input
                         placeholder='Username'
